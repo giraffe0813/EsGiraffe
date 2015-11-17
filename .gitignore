@@ -1,0 +1,37 @@
+*.class
+/*/class/*
+/*/classes/*
+/*/.gitignore
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/*/.settings/*
+/*/*/.settings/*
+/*/*/*/.settings/*
+/*/target/*
+/*/*/target/*
+/*/*/*/target/*
+/*/bin/*
+*.log
+# jetbrains project files
+/*/.idea/
+.DS_Store
+.springBeans
+*.iml
+# eclipse project files
+*.classpath
+*.project
+!**/dev/*
+!**/test/*
+!**/share/*
+.idea
+
+backList

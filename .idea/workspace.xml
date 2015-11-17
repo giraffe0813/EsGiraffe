@@ -28,7 +28,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/me/ele/bpm/elasticsearch/annotation/Bool.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.2614897">
-              <caret line="17" column="7" selection-start-line="17" selection-start-column="7" selection-end-line="17" selection-end-column="7" />
+              <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -748,15 +748,15 @@
       <updated>1446714268839</updated>
       <workItem from="1446714272581" duration="13102000" />
       <workItem from="1447643391121" duration="6761000" />
-      <workItem from="1447727403133" duration="4361000" />
+      <workItem from="1447727403133" duration="4364000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24224000" />
+    <option name="totallyTimeSpent" value="24227000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="42" y="23" width="1238" height="777" extended-state="1" />
+    <frame x="42" y="23" width="1238" height="777" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1071,7 +1071,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/me/ele/bpm/elasticsearch/annotation/Bool.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2614897">
-          <caret line="17" column="7" selection-start-line="17" selection-start-column="7" selection-end-line="17" selection-end-column="7" />
+          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
           <folding />
         </state>
       </provider>

@@ -59,7 +59,7 @@ public class OrderModel {
 ```
 public SearchService implements ISearchService{
 
-		public String tempSearch(SearchOrderNewModel search){
+		public String searchOrder(OrderModel search){
 		BoolQueryBuilder baseQuery = QueryBuilders.boolQuery();
 		if(search.getUserName() != null){
 			baseQuery.should(QueryBuilders.termQuery("user_name", search.getUserName()));
@@ -125,7 +125,27 @@ public SearchService implements ISearchService{
 } 
 
 ```
-可是上面只是缩减版的订单model，一个订单的属性有20多个 所以每个属性都判断是否为null，代码就太不漂亮了。
+可是上面只是缩减版的订单model，一个订单的属性有20多个 所以每个属性都判断是否为null，代码就太不漂亮了,而且可读性差，不易维护，所以就想通过注解和反射来精简代码。
+
+#### 2.使用EsGiraffe简化代码
+
+EsGiraffe主要是自定义了一些注解，将一些诸如model属性对应的搜索引擎的字段，查询的类型，要查询的index名，要查询的document名用注解标注在model类上，然后在工具类中利用反射获取注解的值 拼接查询语句。下面是几个比较重要的注解:
+
+- Index注解 Document注解
+> 只能在类上使用 Index代表要在哪个索引中查询， Document代表要查询的文档 可以指定多个索引或文档用","分割
+
+例子:
+
+```
+@Index("index")
+@Document("document1")
+public class model{
+}
+
+```
+
+
+
 
 
           

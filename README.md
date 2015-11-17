@@ -132,6 +132,7 @@ public SearchService implements ISearchService{
 EsGiraffe主要是自定义了一些注解，将一些诸如model属性对应的搜索引擎的字段，查询的类型，要查询的index名，要查询的document名用注解标注在model类上，然后在工具类中利用反射获取注解的值 拼接查询语句。下面是几个比较重要的注解:
 
 - Index注解 Document注解
+
 > 只能在类上使用 Index代表要在哪个索引中查询， Document代表要查询的文档 可以指定多个索引或文档用","分割
 
 例子:

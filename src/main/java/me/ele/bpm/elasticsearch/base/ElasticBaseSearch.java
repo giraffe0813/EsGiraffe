@@ -6,6 +6,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,7 @@ public class ElasticBaseSearch {
                         nestQb = boolQuery().should(termQuery(esFieldName, f.get(obj)));
                         break;
                     case QUERY_STRING:
-                        nestQb = queryStringQuery((String)f.get(obj)).defaultField(esFieldName);
+                        nestQb = queryStringQuery((String)f.get(obj)).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
                         break;
                     case MATCH:
                     	nestQb = matchQuery(esFieldName, (String)f.get(obj));

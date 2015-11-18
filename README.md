@@ -212,7 +212,7 @@ public class model{
 public class OrderModel {
 
 	@EsField("user_name")
-    @Bool(type = EsSearchType.QUERY_STRING)
+    @Bool(type = EsSearchType.QUERY_STRING, value = MatchType.SHOULD)
 	private String userName;
 	
 	@EsField("restaurant_id")

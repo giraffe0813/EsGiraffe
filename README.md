@@ -59,7 +59,7 @@ public class OrderModel {
 ```
 public SearchService implements ISearchService{
 
-		public String searchOrder(OrderModel search){
+		public String searchOrder(SearchOrderModel search) throws IllegalAccessException{
 		BoolQueryBuilder baseQuery = QueryBuilders.boolQuery();
 		if(search.getUserName() != null){
 			baseQuery.should(QueryBuilders.termQuery("user_name", search.getUserName()));
@@ -86,8 +86,8 @@ public SearchService implements ISearchService{
 			baseQuery.must(QueryBuilders.rangeQuery("created_at").lte(search.getCreatedAtBegin()));
 		}
 		log.info("查询语句:{}",baseQuery.toString());
-		SearchResponse response = client.prepareSearch("index1", "index2")
-				.setTypes("type1", "type2")
+		SearchResponse response = client.prepareSearch("index1")
+				.setTypes("type1")
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setQuery(baseQuery)
 				.setFrom(search.getOffset()).setSize(search.getLimit()).setExplain(true)
@@ -127,7 +127,7 @@ public SearchService implements ISearchService{
 ```
 可是上面只是缩减版的订单model，一个订单的属性有20多个 所以每个属性都判断是否为null，代码就太不漂亮了,而且可读性差，不易维护，所以就想通过注解和反射来精简代码。
 
-#### 2.使用EsGiraffe简化代码
+#### 2.EsGiraffe的主要内容
 
 EsGiraffe主要是自定义了一些注解，将一些诸如model属性对应的搜索引擎的字段，查询的类型，要查询的index名，要查询的document名用注解标注在model类上，然后在工具类中利用反射获取注解的值 拼接查询语句。下面是几个比较重要的注解:
 
@@ -164,7 +164,142 @@ public class model{
 
 - Bool注解
 
->最重要的注解
+>最重要的注解，里面包含两个元素value和type。其中value是MatchType(枚举类)类型，代表了该Bool查询是MUST，MUST_NOT还是SHOULD，默认是MUST。type的值是EsSearchType(枚举类)类型，代表对该字段采用什么类型的查询。默认值是TERMS，支持的其他类型还有TERM,RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, SHOULD_TERM, QUERY_STRING, MATCH
+
+例子：
+
+```
+@Index("index")
+@DocumentType("document1")
+public class model{
+	
+	@EsField("come_from")
+	@Bool(type = EsSearchType.TERM)
+	private Integer comeFrom;
+	
+	@EsField("created_at")
+	@Bool(type = EsSearchType.RANGE_GTE)
+	private String createdAtBegin;
+}
+
+```
+上面的注解代表的查询语句是
+
+```
+{   "bool" : {     "must" : [ {       "term" : {         "come_from" : 1       }     }, {       "range" : {         "created_at" : {           "from" : "2015-02-03",           "to" : null,           "include_lower" : true,           "include_upper" : true         }       }     } ]   } } 
+
+```
+
+- From,Size,Sort注解
+
+> 这三个注解也是用到类的属性上的，如果一个属性上标有From注解，代表这个字段的值是查询分页的起始位置；如果一个属性上标有Size注解，代表这个字段的值是分页的长度；如果一个属性上标有Sort注解，代表查询结果按该字段排序，Sort的值有SortType.ASC和SortType.DESC两种。
+
+- ElasticBaseSearch中两个工具方法 getIndexAndType和getQueryBuilder
+
+已经在类和属性添加了注解，那么就需要写两个方法分别通过反射获取类和属性上的值 来拼接对应的查询语句。
+其中getQueryBuilder是根据属性上的注解拼装查询语句并返回一个QueryBuilder对象，getIndexAndType是根据注解获得要查询的索引，文档等信息，并返回一个SearchRequestBuilder对象。
+
+#### 3.使用EsGiraffe简化代码
+
+>下面是使用EsGiraffe简化后的代码
+
+查询model类
+
+
+```
+@Index("index1")
+@DocumentType("type1")
+public class OrderModel {
+
+	@EsField("user_name")
+    @Bool(type = EsSearchType.QUERY_STRING)
+	private String userName;
+	
+	@EsField("restaurant_id")
+    @Bool(type = EsSearchType.TERM)
+	private Integer restaurantId;
+	
+	@EsField("order_mode")
+	@Bool(type = EsSearchType.TERM)
+	private Integer orderMode;
+	
+	@EsField("usr_phone")
+	@Bool(type = EsSearchType.TERM)
+	private String userPhone;
+
+	@EsField("come_from")
+	@Bool(type = EsSearchType.TERM)
+	private Integer comeFrom;
+	
+	@EsField("restaurant_name")
+    @Bool(type = EsSearchType.QUERY_STRING)
+	private String restaurantName;
+	
+	@EsField("created_at")
+    @Bool(type = EsSearchType.RANGE_GTE)
+    private String createdAtBegin;
+    
+    @EsField("created_at")
+    @Bool(type = EsSearchType.RANGE_LTE)
+    private String createdAtEnd;
+
+	@From
+    private Integer offset = 0;
+
+	@Size
+    private Integer limit = 10;
+    //省略getter和setter
+    }
+
+
+```
+
+接口类，也无需写大量的业务逻辑，只需要调用两个工具方法即可
+
+```
+    public String searchOrder(SearchOrderModel search) throws IllegalAccessException {
+        log.info("查询参数:{}", search.toString());     
+        
+        QueryBuilder baseQuery = ElasticBaseSearch.getInstance().getQueryBuilder(search);
+      
+
+        if(baseQuery != null){
+        	log.info(baseQuery.toString());        
+            SearchResponse response = ElasticBaseSearch.getInstance().getIndexAndType(client, search).setQuery(baseQuery).execute().actionGet();
+            log.info(response.toString());
+
+            return response.toString();
+        }
+        
+        return "";
+    }
+```
+
+使用了EsGiraffe之后，大大简化了查询接口的代码，无需挨个属性判断是否为null。而且在model类上使用注解，使得程序变得更加可读，每个属性对应搜索引擎中哪个字段，采用哪种查询方式一目了然。下面是使用EsGiraffe之后，对餐厅名称，用户名和来源查询时打印的查询语句，和不用注解生成的是一样的。
+
+
+```
+{   "bool" : {     
+		"must" : [ {       
+			"term" : {         
+				"come_from" : 1       
+				}     
+			}, {       
+			"query_string" : {         
+				"query" : "测试餐厅",         
+				"default_field" : "restaurant_name"       
+				}    
+		 } ],     
+		 "should" : {       
+		 	"term" : {         
+		 		"user_name" : "123123123"       
+		 		}     
+		 	}   
+		 } 
+}
+
+```
+
 
 
 

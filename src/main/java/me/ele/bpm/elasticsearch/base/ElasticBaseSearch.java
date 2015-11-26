@@ -1,6 +1,7 @@
 package me.ele.bpm.elasticsearch.base;
 
 import me.ele.bpm.elasticsearch.annotation.*;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -168,10 +169,11 @@ public class ElasticBaseSearch {
                         nestQb = boolQuery().should(termQuery(esFieldName, f.get(obj)));
                         break;
                     case QUERY_STRING:
-                        nestQb = queryStringQuery((String)f.get(obj)).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
+                        String value = QueryParser.escape((String)f.get(obj));
+                        nestQb = queryStringQuery(value).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
                         break;
                     case MATCH:
-                    	nestQb = matchQuery(esFieldName, (String)f.get(obj));
+                    	nestQb = matchQuery(esFieldName, f.get(obj));
                     	break;
 
                 }

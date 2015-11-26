@@ -31,7 +31,7 @@
 ```
 public class OrderModel {
 
-	private String userName;
+private String userName;
 	
 	private Integer restaurantId;
 	
@@ -43,14 +43,14 @@ public class OrderModel {
 	
 	private String restaurantName;
 	
-    private String createdAtBegin;
+	private String createdAtBegin;
     
-    private String createdAtEnd;
+	private String createdAtEnd;
+	
+	private Integer offset = 0;
 
-    private Integer offset = 0;
-
-    private Integer limit = 10;
-    //省略getter和setter
+	private Integer limit = 10;
+	//省略getter和setter
     }
 
 ```

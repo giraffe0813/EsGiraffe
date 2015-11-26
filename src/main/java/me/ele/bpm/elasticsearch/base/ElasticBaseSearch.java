@@ -131,7 +131,12 @@ public class ElasticBaseSearch {
                 EsField esField = f.getAnnotation(EsField.class);
                 //get es field name, default use class field name
                 String esFieldName = ("".equals(esField.value())) ? f.getName() : esField.value();
-                //get search type
+
+                Object value = f.get(obj);
+                //convert special character
+                if(bool.escape()){
+                    value = QueryParser.escape((String)f.get(obj));
+                }
                 //default value
                 QueryBuilder nestQb = termQuery(esFieldName, f.get(obj));
                 switch (bool.type()){
@@ -142,35 +147,34 @@ public class ElasticBaseSearch {
                         nestQb = termsQuery(esFieldName, list);
                         break;
                     case TERM:
-                        nestQb = termQuery(esFieldName, f.get(obj));
+                        nestQb = termQuery(esFieldName, value);
                         break;
                     case RANGE_GT:
-                        nestQb = rangeQuery(esFieldName).gt(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).gt(value);
                         break;
                     case RANGE_GTE:
-                        nestQb = rangeQuery(esFieldName).gte(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).gte(value);
                         break;
                     case RANGE_LT:
-                        nestQb = rangeQuery(esFieldName).lt(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).lt(value);
                         break;
                     case RANGE_LTE:
-                        nestQb = rangeQuery(esFieldName).lte(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).lte(value);
                         break;
                     case RANGE_FROM:
-                        nestQb = rangeQuery(esFieldName).from(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).from(value);
                         break;
                     case RANGE_TO:
-                        nestQb = rangeQuery(esFieldName).to(f.get(obj));
+                        nestQb = rangeQuery(esFieldName).to(value);
                         break;
                     case FUZZY:
-                        nestQb = fuzzyQuery(esFieldName, f.get(obj));
+                        nestQb = fuzzyQuery(esFieldName, value);
                         break;
                     case SHOULD_TERM:
-                        nestQb = boolQuery().should(termQuery(esFieldName, f.get(obj)));
+                        nestQb = boolQuery().should(termQuery(esFieldName, value));
                         break;
                     case QUERY_STRING:
-                        String value = QueryParser.escape((String)f.get(obj));
-                        nestQb = queryStringQuery(value).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
+                        nestQb = queryStringQuery((String)value).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
                         break;
                     case MATCH:
                     	nestQb = matchQuery(esFieldName, f.get(obj));

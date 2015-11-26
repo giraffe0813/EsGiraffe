@@ -22,7 +22,7 @@
  
  
 #### 0.常见的工作需求
-在我工作比较常见的搜索需求就是对外提供搜索的接口。会按照搜索引擎中的字段定义一个对应的model，然后这些字段的值如果为Null，就代表调用方不想对这个字段进行查询，如果不为Null代表需要对这个字段进行查询。而且还会提前在API文档中定义好查询的类型是must、must_not还是should
+在我工作中，比较常见的搜索需求就是对外提供搜索的接口。会按照搜索引擎中的字段定义一个对应的model，然后这些字段的值如果为Null，就代表调用方不想对这个字段进行查询，如果不为Null代表需要对这个字段进行查询。而且还会提前在API文档中定义好查询的类型是must、must_not还是should
 
 #### 1.未使用工具类的代码Demo
 假设有一个和订单有关的索引，需要对订单的一系列属性进行查询 其中userName和orderMode是should查询 其余都是must
@@ -133,7 +133,7 @@ EsGiraffe主要是自定义了一些注解，将一些诸如model属性对应的
 
 - Index注解 DocumentType注解
 
-> 只能在类上使用 Index代表要在哪个索引中查询， Document代表要查询的文档 可以指定多个索引或文档用","分割
+> 只能在类上使用 Index代表要在哪个索引中查询， Document代表要查询的文档 可以指定多个索引或文档用","分割即可
 
 例子:
 
@@ -144,6 +144,8 @@ public class model{
 }
 
 ```
+不过，这两个注解只适用于在查询前就确定要查询的索引和文档时使用。如果要根据查询的内容才能
+确定要查询的文档，目前没有想到什么好的解决办法，这种情况只能不用Index和DocumentType注解了。比如做活动查询时，活动索引到搜索引擎中是按照活动所属的城市存储到不同的文档，举个栗子🌰，如果活动1的城市id是1,那么活动1就存在在文档activity_1,如果活动2的城市id是3，那么活动2就存在在文档activity_3中，这种情况就不能靠通过注解的方式获得查询的文档了。
 
 - EsField注解
 
@@ -164,7 +166,7 @@ public class model{
 
 - Bool注解
 
->最重要的注解，里面包含两个元素value和type。其中value是MatchType(枚举类)类型，代表了该Bool查询是MUST，MUST_NOT还是SHOULD，默认是MUST。type的值是EsSearchType(枚举类)类型，代表对该字段采用什么类型的查询。默认值是TERMS，支持的其他类型还有TERM,RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, SHOULD_TERM, QUERY_STRING, MATCH
+>最重要的注解，里面包含三个元素value，type和escape。其中value是MatchType(枚举类)类型，代表了该Bool查询是MUST，MUST_NOT还是SHOULD，默认是MUST。type的值是EsSearchType(枚举类)类型，代表对该字段采用什么类型的查询。默认值是TERMS，支持的其他类型还有TERM,RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, SHOULD_TERM, QUERY_STRING, MATCH。escape是布尔类型的，代表是否需要进行特殊字符(eg: !$()等)的转换，默认值是false。
 
 例子：
 

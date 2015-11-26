@@ -23,6 +23,7 @@ public @interface Bool {
 
     MatchType value() default MatchType.MUST;
     EsSearchType type() default EsSearchType.TERMS;
+    boolean escape() default false; // if query String may be contain special character, escape should be true
 
 
 }

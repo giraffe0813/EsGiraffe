@@ -6,7 +6,7 @@
 
     <groupId>me.ele</groupId>
     <artifactId>elastic.util.giraffe</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>elastic.util.giraffe</name>
@@ -36,6 +36,20 @@
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -52,6 +66,7 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 

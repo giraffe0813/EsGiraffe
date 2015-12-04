@@ -4,9 +4,9 @@ import me.ele.bpm.elasticsearch.annotation.*;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
@@ -168,7 +168,10 @@ public class ElasticBaseSearch {
                         nestQb = rangeQuery(esFieldName).to(value);
                         break;
                     case FUZZY:
-                        nestQb = fuzzyQuery(esFieldName, value);
+                        int fuzziness = bool.fuzziness();
+                        int prefix = bool.prefix();
+                        nestQb = (fuzziness == -1) ? fuzzyQuery(esFieldName, value).prefixLength(prefix).fuzziness(Fuzziness.AUTO) :
+                                fuzzyQuery(esFieldName, value).prefixLength(prefix).fuzziness(Fuzziness.fromEdits(fuzziness));
                         break;
                     case SHOULD_TERM:
                         nestQb = boolQuery().should(termQuery(esFieldName, value));

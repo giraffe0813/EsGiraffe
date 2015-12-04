@@ -24,6 +24,8 @@ public @interface Bool {
     MatchType value() default MatchType.MUST;
     EsSearchType type() default EsSearchType.TERMS;
     boolean escape() default false; // if query String may be contain special character, escape should be true
+    int fuzziness() default -1;// only be used under type equals EsSearchType.Fuzzy. default -1 represent use auto value
+    int prefix() default 0;// only be used under type equals EsSearchType.Fuzzy. default 0
 
 
 }

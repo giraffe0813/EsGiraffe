@@ -166,7 +166,7 @@ public class model{
 
 - Bool注解
 
->最重要的注解，里面包含三个元素value，type和escape。其中value是MatchType(枚举类)类型，代表了该Bool查询是MUST，MUST_NOT还是SHOULD，默认是MUST。type的值是EsSearchType(枚举类)类型，代表对该字段采用什么类型的查询。默认值是TERMS，支持的其他类型还有TERM,RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, SHOULD_TERM, QUERY_STRING, MATCH。escape是布尔类型的，代表是否需要进行特殊字符(eg: !$()等)的转换，默认值是false。
+>最重要的注解，里面包含5个元素value,type,escape,fuzziness,prefix。其中**value**是MatchType(枚举类)类型，代表了该Bool查询是MUST，MUST_NOT还是SHOULD，默认是MUST。**type**的值是EsSearchType(枚举类)类型，代表对该字段采用什么类型的查询。默认值是TERMS，支持的其他类型还有TERM,RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, SHOULD_TERM, QUERY_STRING, MATCH。**escape**是布尔类型的，代表是否需要进行特殊字符(eg: !$()等)的转换，默认值是false。**fuzziness**和**prefix**是在新版本中针对type=EsSearchType.FUZZY做的扩展而新增的元素。分别代表Fuzzy Query中的fuzziness和prefix_length,这两个参数的意思可以到[官方文档](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_string_fields_2)上看，要注意的是这两个元素只有在type=EsSearchType.FUZZY时才有效
 
 例子：
 

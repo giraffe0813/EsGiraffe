@@ -180,7 +180,8 @@ public class ElasticBaseSearch {
                         nestQb = queryStringQuery((String)value).defaultField(esFieldName).defaultOperator(QueryStringQueryBuilder.Operator.AND);
                         break;
                     case MATCH:
-                    	nestQb = matchQuery(esFieldName, f.get(obj)).minimumShouldMatch("85%");
+                        String minimumShouldMatch = bool.minimumShouldMatch();
+                    	nestQb = matchQuery(esFieldName, f.get(obj)).minimumShouldMatch(minimumShouldMatch);
                     	break;
 
                 }

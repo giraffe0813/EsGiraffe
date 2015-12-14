@@ -5,6 +5,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.Fuzziness;
+import static org.elasticsearch.common.xcontent.XContentFactory.*;
+
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
@@ -12,8 +15,10 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Date;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -199,6 +204,67 @@ public class ElasticBaseSearch {
             }
         }
         return qb;
+    }
+
+
+    /**
+     * get json for update Index via annotation
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
+    public XContentBuilder getJsonBuilder4Update(Object obj) throws IllegalAccessException, IOException {
+
+        XContentBuilder builder = jsonBuilder().startObject();
+
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for(Field  f : fields) {
+            //access private field
+            f.setAccessible(true);
+
+            //field value is null, skip
+            if (f.get(obj) == null) {
+                continue;
+            }
+
+            if(f.isAnnotationPresent(EsField.class)) {
+                EsField esField = f.getAnnotation(EsField.class);
+                String esFieldName = ("".equals(esField.value())) ? f.getName() : esField.value();
+                builder = builder.field(esFieldName, f.get(obj));
+            }
+        }
+        builder.endObject();
+
+        return builder;
+    }
+
+    /**
+     * get json for insert data in Index via annotation
+     * the difference from method getJsonBuilder4Update is when value of field is null, do not skip
+     * @param obj
+     * @return
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
+    public XContentBuilder getJsonBuilder4Index(Object obj) throws IllegalAccessException, IOException {
+
+        XContentBuilder builder = jsonBuilder().startObject();
+
+        Field[] fields = obj.getClass().getDeclaredFields();
+        for(Field  f : fields) {
+            //access private field
+            f.setAccessible(true);
+
+            if(f.isAnnotationPresent(EsField.class)) {
+                EsField esField = f.getAnnotation(EsField.class);
+                String esFieldName = ("".equals(esField.value())) ? f.getName() : esField.value();
+                builder = builder.field(esFieldName, f.get(obj));
+            }
+        }
+        builder.endObject();
+
+        return builder;
     }
 
 

@@ -6,6 +6,6 @@ package me.ele.bpm.elasticsearch.constant;
 public enum EsSearchType {
 
     TERM, TERMS , RANGE_FROM, RANGE_TO, RANGE_GT,RANGE_LT, RANGE_GTE, RANGE_LTE, FUZZY, 
-    SHOULD_TERM, QUERY_STRING, MATCH
+    SHOULD_TERM, QUERY_STRING, MATCH, WILDCARD_SEARCH
 
 }

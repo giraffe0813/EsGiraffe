@@ -11,6 +11,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Date;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -188,6 +188,9 @@ public class ElasticBaseSearch {
                         String minimumShouldMatch = bool.minimumShouldMatch();
                     	nestQb = matchQuery(esFieldName, f.get(obj)).minimumShouldMatch(minimumShouldMatch);
                     	break;
+                    case WILDCARD_SEARCH:
+                        nestQb = wildcardQuery(esFieldName, "*" + f.get(obj) + "*");
+                        break;
 
                 }
                 switch (bool.value()){

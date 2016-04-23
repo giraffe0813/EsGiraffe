@@ -1,9 +1,9 @@
-package me.ele.bpm.elasticsearch.base;
+package ymy.com.elasticsearch.base;
 
-import me.ele.bpm.elasticsearch.annotation.*;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.elasticsearch.action.search.SearchAction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.ElasticsearchClient;
 import org.elasticsearch.common.unit.Fuzziness;
 import static org.elasticsearch.common.xcontent.XContentFactory.*;
 
@@ -11,10 +11,10 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ymy.com.elasticsearch.annotation.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -54,9 +54,9 @@ public class ElasticBaseSearch {
      * @param obj
      * @return
      */
-    public SearchRequestBuilder getIndexAndType(Client client, Object obj) throws IllegalAccessException {
+    public SearchRequestBuilder getIndexAndType(ElasticsearchClient client, Object obj) throws IllegalAccessException {
 
-        SearchRequestBuilder sq = new SearchRequestBuilder(client);
+        SearchRequestBuilder sq = new SearchRequestBuilder(client, SearchAction.INSTANCE);
 
         Class<?> clazz = obj.getClass();
 
@@ -66,7 +66,7 @@ public class ElasticBaseSearch {
             //default value
             String[] indices = {clazz.getName()};
             indices = (index.value().length == 0) ? indices : index.value();
-            sq = client.prepareSearch(indices);
+            sq.setIndices(indices);
         }
 
         //check if DocumentType annotation is present
@@ -75,7 +75,7 @@ public class ElasticBaseSearch {
             //default value
             String[] types = {clazz.getName()};
             types = (type.value().length == 0) ? types : type.value();
-            sq = sq.setTypes(types);
+            sq.setTypes(types);
         }
 
         //check if size annotation and from annotation are present

@@ -1,6 +1,6 @@
-package me.ele.bpm.elasticsearch.annotation;
+package ymy.com.elasticsearch.annotation;
 
-import me.ele.bpm.elasticsearch.constant.SortType;
+import ymy.com.elasticsearch.constant.SortType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

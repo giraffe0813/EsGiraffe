@@ -1,4 +1,4 @@
-package me.ele.bpm.elasticsearch.constant;
+package ymy.com.elasticsearch.constant;
 
 /**
  * Created by yemengying on 15/11/5.

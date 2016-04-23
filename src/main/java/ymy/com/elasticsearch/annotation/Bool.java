@@ -1,7 +1,7 @@
-package me.ele.bpm.elasticsearch.annotation;
+package ymy.com.elasticsearch.annotation;
 
-import me.ele.bpm.elasticsearch.constant.EsSearchType;
-import me.ele.bpm.elasticsearch.constant.MatchType;
+import ymy.com.elasticsearch.constant.EsSearchType;
+import ymy.com.elasticsearch.constant.MatchType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

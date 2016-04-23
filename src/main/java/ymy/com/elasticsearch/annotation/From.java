@@ -1,4 +1,4 @@
-package me.ele.bpm.elasticsearch.annotation;
+package ymy.com.elasticsearch.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,13 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * can only be used on class field
- * represent page size
+ * represent page start
  * Created by yemengying on 15/11/4.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Size {
+public @interface From {
 
-    int value() default 10;
-
+    int value() default 0;
 }
